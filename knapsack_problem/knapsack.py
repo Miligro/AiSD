@@ -1,40 +1,49 @@
-VtoS = []
-knapsack = []
-n_containers = int(input("Number of containers: "))
-size = list(map(int, input("Weight: ").split()))
-value = list(map(int, input("Value: ").split()))
-capacity = int(input("Capacity: "))
+import random
 
-q = n_containers
-e = capacity
 
-Dyn = [[0 for x in range(capacity + 1)] for y in range(n_containers + 1)]
-for i in range(1, n_containers + 1):
-    for j in range(1, capacity + 1):
-        if j < size[i - 1]:
-            Dyn[i][j] = Dyn[i - 1][j]
+def greedy(weight_g, capacity_g, value_g, n_cont):
+    v_s = []
+    knapsack = []
+    for i in range(n_cont):
+        v_s.append(value_g[i] / weight_g[i])
+    while True:
+        if v_s:
+            x = max(v_s)
+            index = v_s.index(x)
+            if capacity_g < min(weight_g):
+                break
+            if capacity_g >= weight_g[index]:
+                knapsack.append(value_g[index])
+                capacity_g = capacity_g - weight_g[index]
+                v_s = v_s[:index] + v_s[index + 1:]
+                weight_g = weight_g[:index] + weight_g[index + 1:]
+                value_g = value_g[:index] + value_g[index + 1:]
+            else:
+                v_s = v_s[:index] + v_s[index + 1:]
         else:
-            Dyn[i][j] = max(Dyn[i - 1][j], Dyn[i - 1][j - size[i - 1]] + value[i - 1])
-
-for i in range(n_containers):
-    VtoS.append(value[i] / size[i])
-
-while True:
-    if VtoS:
-        x = max(VtoS)
-        index = VtoS.index(x)
-        if capacity < min(size):
             break
-        if capacity >= size[index]:
-            knapsack.append(value[index])
-            capacity = capacity - size[index]
-            VtoS = VtoS[:index] + VtoS[index + 1:]
-            size = size[:index] + size[index + 1:]
-            value = value[:index] + value[index + 1:]
-        else:
-            VtoS = VtoS[:index] + VtoS[index + 1:]
-    else:
-        break
-print("Value of knapsack (greedy):", sum(knapsack))
+    return knapsack
 
-print("Value of knapsack (dynamic-programming):", Dyn[q][e])
+
+def dynamic(weight_d, capacity_d, value_d, n_con):
+    dyn = [[0 for x in range(capacity_d + 1)] for y in range(n_con + 1)]
+    for i in range(1, n_con + 1):
+        for j in range(1, capacity_d + 1):
+            if j < weight_d[i - 1]:
+                dyn[i][j] = dyn[i - 1][j]
+            else:
+                dyn[i][j] = max(dyn[i - 1][j], dyn[i - 1][j - weight_d[i - 1]] + value_d[i - 1])
+    return dyn[n_con][capacity_d]
+
+# generator
+
+
+for i in range(1, 16):
+    weight_R = []
+    value_R = []
+    for j in range(100 * i):
+        weight_R.append(random.randrange(1, 20))
+        value_R.append(random.randrange(10, 100))
+    capacity_R = random.randrange(50, sum(weight_R))
+    print("Value of knapsack (dynamic-programming):", dynamic(weight_R, capacity_R, value_R, 100*i))
+    print("Value of knapsack (greedy):", sum(greedy(weight_R, capacity_R, value_R, 100*i)))
