@@ -1,5 +1,5 @@
 import random
-
+import time
 
 def greedy(weight_g, capacity_g, value_g, n_cont):
     v_s = []
@@ -41,9 +41,17 @@ def dynamic(weight_d, capacity_d, value_d, n_con):
 for i in range(1, 16):
     weight_R = []
     value_R = []
-    for j in range(100 * i):
-        weight_R.append(random.randrange(1, 20))
+    for j in range(1000 * i):
+        weight_R.append(random.randrange(1, 10))
         value_R.append(random.randrange(10, 100))
-    capacity_R = random.randrange(50, sum(weight_R))
-    print("Value of knapsack (dynamic-programming):", dynamic(weight_R, capacity_R, value_R, 100*i))
-    print("Value of knapsack (greedy):", sum(greedy(weight_R, capacity_R, value_R, 100*i)))
+    capacity_R = 500
+    start = time.time()
+    print("Value of knapsack (dynamic-programming):", dynamic(weight_R, capacity_R, value_R, 1000*i))
+    end = time.time()
+    total = end - start
+    print("{0:02f}s".format(total))
+    start = time.time()
+    print("Value of knapsack (greedy):", sum(greedy(weight_R, capacity_R, value_R, 1000*i)))
+    end = time.time()
+    total = end - start
+    print("{0:02f}s".format(total))
