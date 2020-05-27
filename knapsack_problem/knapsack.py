@@ -1,6 +1,7 @@
 import random
 import time
 
+
 def greedy(weight_g, capacity_g, value_g, n_cont):
     v_s = []
     knapsack = []
@@ -38,20 +39,34 @@ def dynamic(weight_d, capacity_d, value_d, n_con):
 # generator
 
 
+file = open("dane.txt", "w")
+file.write("weight_d;weight_g;time_d;time_g\n")
 for i in range(1, 16):
     weight_R = []
     value_R = []
     for j in range(1000 * i):
-        weight_R.append(random.randrange(1, 10))
+        weight_R.append(random.randrange(20, 40))
         value_R.append(random.randrange(10, 100))
     capacity_R = 500
     start = time.time()
-    print("Value of knapsack (dynamic-programming):", dynamic(weight_R, capacity_R, value_R, 1000*i))
+    d = dynamic(weight_R, capacity_R, value_R, 1000*i)
     end = time.time()
-    total = end - start
-    print("{0:02f}s".format(total))
+    time_d = end - start
+    print("Value of knapsack (dynamic-programming):", d)
+    print("{0:02f}s".format(time_d))
     start = time.time()
-    print("Value of knapsack (greedy):", sum(greedy(weight_R, capacity_R, value_R, 1000*i)))
+    g = sum(greedy(weight_R, capacity_R, value_R, 1000*i))
     end = time.time()
-    total = end - start
-    print("{0:02f}s".format(total))
+    time_g = end - start
+    print("Value of knapsack (greedy):", g)
+    print("{0:02f}s".format(time_g))
+    file.write(str(d))
+    file.write(";")
+    file.write(str(g))
+    file.write(";")
+    file.write("{0:02f}".format(time_d))
+    file.write(";")
+    file.write("{0:02f}\n".format(time_g))
+
+
+file.close()
